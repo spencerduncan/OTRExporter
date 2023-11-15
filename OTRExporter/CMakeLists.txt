@@ -164,7 +164,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../../libultraship/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../libultraship/extern
     ${CMAKE_CURRENT_SOURCE_DIR}/../../libultraship/src/resource
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../soh/soh
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../mm/2s2h
 	.
 )
 
