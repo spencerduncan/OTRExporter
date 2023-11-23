@@ -185,6 +185,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${stormlib_SOURCE_DIR}/src)
 if(MSVC)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         target_compile_options(${PROJECT_NAME} PRIVATE
+		    $<$<CONFIG:Debug>:
+            /Od;
+            /Oi-
+			>
             $<$<CONFIG:Release>:
                 /Oi;
                 /Gy
@@ -197,7 +201,11 @@ if(MSVC)
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_compile_options(${PROJECT_NAME} PRIVATE
-            $<$<CONFIG:Release>:
+            $<$<CONFIG:Debug>:
+            /Od;
+            /Oi-
+			>
+			$<$<CONFIG:Release>:
                 /Oi;
                 /Gy
             >
