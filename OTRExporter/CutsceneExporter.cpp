@@ -1,10 +1,11 @@
 #include "CutsceneExporter.h"
+#include "Globals.h"
 #include <libultraship/bridge.h>
 
 void OTRExporter_Cutscene::Save(ZResource* res, const fs::path& outPath, BinaryWriter* writer) {
     ZCutscene* cs = (ZCutscene*)res;
 
-	WriteHeader(cs, outPath, writer, static_cast<uint32_t>(SOH::ResourceType::SOH_Cutscene));
+    WriteHeader(cs, outPath, writer, static_cast<uint32_t>(SOH::ResourceType::SOH_Cutscene));
 
     writer->Write((uint32_t)0);
 
@@ -12,7 +13,12 @@ void OTRExporter_Cutscene::Save(ZResource* res, const fs::path& outPath, BinaryW
 
     writer->Write(CS_BEGIN_CUTSCENE(cs->numCommands, cs->endFrame));
 
-    SaveMM(cs, writer);
+    if (Globals::Instance->game == ZGame::MM_RETAIL) {
+        SaveMM(cs, writer);
+    } else {
+        SaveOot(cs, writer);
+    }
+
 
     // CS_END
     writer->Write(0xFFFFFFFF);

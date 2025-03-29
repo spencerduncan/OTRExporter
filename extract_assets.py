@@ -8,20 +8,29 @@ import struct
 import subprocess
 import argparse
 
-def BuildOTR(xmlPath, rom, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None):
+def BuildOTR(xmlPath, rom, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None, isMM):
     if not zapd_exe:
         zapd_exe = "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
 
     exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "CFG/filelists",
-                "-o", "placeholder", "-osf", "placeholder", "-rconf", "CFG/Config.xml"]
+                "-o", "placeholder", "-osf", "placeholder", "-rconf"]
+    if isMM:
+        exec_cmd.extend("CFG/Config_MM.xml")
+    else:
+        exec_cmd.extend("CFG/Config.xml")
 
     # generate headers, but not otrs by excluding the otr exporter
     if genHeaders:
         exec_cmd.extend(["-gsf", "1"])
     else:
         # generate otrs, but not headers
-        exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
-                "--customOtrFile", customOtrFile, "--otrfile", "mm.zip"])
+        if isMM:
+            exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
+                    "--customOtrFile", customOtrFile, "--otrfile", "mm.zip"])
+        else:
+            exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
+                             "--customOtrFile", customOtrFile, "--otrfile", "oot.otr"])
+
 
     if portVer:
         exec_cmd.extend(["--portVer", portVer])
@@ -79,7 +88,7 @@ def main():
     roms = [ Z64Rom(args.rom) ] if args.rom else rom_chooser.chooseROM(args.verbose, args.non_interactive)
     for rom in roms:
         BuildOTR(os.path.join(args.xml_root, rom.version.xml_ver), rom.file_path, zapd_exe=args.zapd_exe, genHeaders=args.gen_headers,
-                 customAssetsPath=args.custom_assets_path, customOtrFile=args.custom_otr_file, portVer=args.port_ver)
+                 customAssetsPath=args.custom_assets_path, customOtrFile=args.custom_otr_file, portVer=args.port_ver, rom_info.is_mm(args.rom))
 
 if __name__ == "__main__":
     main()

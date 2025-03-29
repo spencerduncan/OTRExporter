@@ -89,3 +89,9 @@ if (NOT TARGET ZAPD)
 endif()
 
 add_subdirectory(OTRExporter)
+
+if (GAME_STR STREQUAL "MM")
+    target_compile_definitions(OTRExporter PRIVATE GAME_MM)
+else()
+    target_compile_definitions(OTRExporter PRIVATE GAME_OOT)
+endif()

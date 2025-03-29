@@ -5,8 +5,11 @@
 #include <Utils/BinaryWriter.h>
 #include <libultraship/bridge.h>
 #include "VersionInfo.h"
+#ifdef GAME_MM
 #include "../../mm/2s2h/resource/type/2shResourceType.h"
-
+#elif GAME_OOT
+#include "../../soh/soh/resource/type/SoHResourceType.h"
+#endif
 class OTRExporter : public ZResourceExporter
 {
 protected:
