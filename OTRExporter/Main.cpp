@@ -30,12 +30,18 @@
 #include <mutex>
 #include <ExporterArchiveO2R.h>
 
-std::string otrFileName = "mm.zip";
-std::string customOtrFileName = "";
+#include "ExporterArchiveOTR.h"
+#ifdef GAME_MM
+std::string otrFileName = "mm.o2r";
+
+#elif GAME_OOT
+std::string archiveFileName = "oot.o2r";
+#endif
+std::string customArchiveFileName = "";
 std::string customAssetsPath = "";
 std::string portVersionString = "0.0.0";
 
-std::shared_ptr<ExporterArchive> otrArchive;
+std::shared_ptr<ExporterArchive> archive;
 BinaryWriter* fileWriter;
 std::chrono::steady_clock::time_point fileStart, resStart;
 std::map<std::string, std::vector<char>> files;
@@ -56,19 +62,19 @@ static void ExporterParseFileMode(const std::string& buildMode, ZFileMode& fileM
 
         printf("BOTR: Generating OTR Archive...\n");
 
-        otrArchive = std::make_shared<ExporterArchiveO2R>(otrFileName, true);
+        archive = std::make_shared<ExporterArchiveO2R>(archiveFileName, true);
 
-        if (DiskFile::Exists(otrFileName))
-            otrArchive->Load(true);
+        if (DiskFile::Exists(archiveFileName))
+            archive->Load(true);
         else
-            otrArchive->CreateArchive(40000);
+            archive->CreateArchive(40000);
 
         auto lst = Directory::ListFiles("Extract");
 
         for (auto item : lst)
         {
             auto fileData = DiskFile::ReadAllBytes(item);
-            otrArchive->AddFile(StringHelper::Split(item, "Extract/")[1], fileData.data(), fileData.size());
+            archive->AddFile(StringHelper::Split(item, "Extract/")[1], fileData.data(), fileData.size());
         }
     }
 }
@@ -143,16 +149,16 @@ static void ExporterProgramEnd()
         printf("Created version file.\n");
 
         printf("Generating OTR Archive...\n");
-        otrArchive = std::make_shared<ExporterArchiveO2R>(otrFileName, true);
-        otrArchive->CreateArchive(40000);
+        archive = std::make_shared<ExporterArchiveO2R>(archiveFileName, true);
+        archive->CreateArchive(40000);
 
         printf("Adding game version file.\n");
         auto versionStreamBuffer = versionStream->ToVector();
-        otrArchive->AddFile("version", (void*)versionStreamBuffer.data(), versionStream->GetLength());
+        archive->AddFile("version", (void*)versionStreamBuffer.data(), versionStream->GetLength());
 
         printf("Adding portVersion file.\n");
         auto portVersionStreamBuffer = portVersionStream->ToVector();
-        otrArchive->AddFile("portVersion", (void*)portVersionStreamBuffer.data(), portVersionStream->GetLength());
+        archive->AddFile("portVersion", (void*)portVersionStreamBuffer.data(), portVersionStream->GetLength());
 
         for (const auto& item : files)
         {
@@ -166,17 +172,17 @@ static void ExporterProgramEnd()
                 }
             }
             const auto& fileData = item.second;
-            otrArchive->AddFile(fName, (void*)fileData.data(),	fileData.size());
+            archive->AddFile(fName, (void*)fileData.data(),	fileData.size());
         }
 
-        otrArchive = nullptr;
+        archive = nullptr;
     }
 
     delete fileWriter;
     files.clear();
 
     // Generate custom otr file for extra assets
-    if (customAssetsPath == "" || customOtrFileName == "" || DiskFile::Exists(customOtrFileName)) {
+    if (customAssetsPath == "" || customArchiveFileName == "" || DiskFile::Exists(customArchiveFileName)) {
         printf("No Custom Assets path or otr file name provided, otr file already exists. Nothing to do.\n");
         return;
     }
@@ -188,7 +194,7 @@ static void ExporterProgramEnd()
     const auto& lst = Directory::ListFiles(customAssetsPath);
 
     printf("Generating Custom OTR Archive...\n");
-    auto customOtr = std::make_unique<ExporterArchiveO2R>(customOtrFileName, true);
+    auto customOtr = std::make_unique<ExporterArchiveO2R>(customArchiveFileName, true);
     customOtr->CreateArchive(40000);
     
     printf("Adding portVersion file.\n");
@@ -271,10 +277,10 @@ static void ExporterParseArgs(int argc, char* argv[], int& i)
     std::string arg = argv[i];
 
     if (arg == "--otrfile") {
-        otrFileName = argv[i + 1];
+        archiveFileName = argv[i + 1];
         i++;
     } else if (arg == "--customOtrFile") {
-        customOtrFileName = argv[i + 1];
+        customArchiveFileName = argv[i + 1];
         i++;
     } else if (arg == "--customAssetsPath") {
         customAssetsPath = argv[i + 1];
@@ -420,13 +426,15 @@ void ImportExporters()
     exporterSet->exporters[ZResourceType::Array] = new OTRExporter_Array();
     exporterSet->exporters[ZResourceType::Path] = new OTRExporter_Path();
     exporterSet->exporters[ZResourceType::Text] = new OTRExporter_Text();
+#ifdef GAME_MM
     exporterSet->exporters[ZResourceType::TextMM] = new OTRExporter_TextMM();
+    exporterSet->exporters[ZResourceType::KeyFrameSkel] = new OTRExporter_CKeyFrameSkel();
+    exporterSet->exporters[ZResourceType::KeyFrameAnimation] = new OTRExporter_CKeyFrameAnim();
+    exporterSet->exporters[ZResourceType::TextureAnimation] = new OTRExporter_TextureAnimation();
+#endif
     exporterSet->exporters[ZResourceType::Blob] = new OTRExporter_Blob();
     exporterSet->exporters[ZResourceType::Mtx] = new OTRExporter_MtxExporter();
     exporterSet->exporters[ZResourceType::Audio] = new OTRExporter_Audio();
-    exporterSet->exporters[ZResourceType::TextureAnimation] = new OTRExporter_TextureAnimation();
-    exporterSet->exporters[ZResourceType::KeyFrameSkel] = new OTRExporter_CKeyFrameSkel();
-    exporterSet->exporters[ZResourceType::KeyFrameAnimation] = new OTRExporter_CKeyFrameAnim();
     Globals::AddExporter("OTR", exporterSet);
 
     InitVersionInfo();

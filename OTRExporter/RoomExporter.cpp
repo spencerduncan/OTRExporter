@@ -543,6 +543,7 @@ void OTRExporter_Room::Save(ZResource* res, const fs::path& outPath, BinaryWrite
             }
             break;
         }
+#ifdef GAME_MM
         case RoomCommand::SetAnimatedMaterialList: {
             SetAnimatedMaterialList* list = (SetAnimatedMaterialList*)cmd;
             std::string listName;
@@ -561,6 +562,7 @@ void OTRExporter_Room::Save(ZResource* res, const fs::path& outPath, BinaryWrite
 
             break;
         }
+#endif
         case RoomCommand::SetMinimapList: {
             SetMinimapList* list = (SetMinimapList*)cmd;
 

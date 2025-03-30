@@ -1,3 +1,4 @@
+#ifdef GAME_MM
 #include "TextMMExporter.h"
 #include "../ZAPD/ZFile.h"
 
@@ -21,3 +22,4 @@ void OTRExporter_TextMM::Save(ZResource* res, const fs::path& outPath, BinaryWri
 		writer->Write(txt->messages[i].msg);
 	}
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef GAME_MM
 #define NO_GDI
 #define WIN32_LEAN_AND_MEAN
 #include "ZFile.h"
@@ -122,3 +123,4 @@ void OTRExporter_TextureAnimation::Save(ZResource* res, const fs::path& outPath,
 		}
 	}
 }
+#endif
