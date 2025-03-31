@@ -32,8 +32,7 @@
 
 #include "ExporterArchiveOTR.h"
 #ifdef GAME_MM
-std::string otrFileName = "mm.o2r";
-
+std::string archiveFileName = "mm.o2r";
 #elif GAME_OOT
 std::string archiveFileName = "oot.o2r";
 #endif
