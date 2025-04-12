@@ -8,29 +8,27 @@ import struct
 import subprocess
 import argparse
 
-def BuildOTR(xmlPath, rom, isMM, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None):
+def BuildOTR(xmlRoot, xmlVersion, rom, isMM, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None):
     if not zapd_exe:
         zapd_exe = "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
-
-    exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "CFG/filelists",
+    xmlPath = os.path.join(xmlRoot, xmlVersion)
+    exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "assets/extractor/filelists",
                 "-o", "placeholder", "-osf", "placeholder", "-rconf"]
+    otrFileName = "oot.o2r"
     if isMM:
         exec_cmd.extend(["CFG/Config_MM.xml"])
+        otrFileName = "mm.o2r"
     else:
-        exec_cmd.extend(["CFG/Config.xml"])
+        configFileStr = "assets/extractor/Config_" + xmlVersion + ".xml"
+        exec_cmd.extend([configFileStr])
 
     # generate headers, but not otrs by excluding the otr exporter
     if genHeaders:
         exec_cmd.extend(["-gsf", "1"])
     else:
         # generate otrs, but not headers
-        if isMM:
-            exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
-                    "--customOtrFile", customOtrFile, "--otrfile", "mm.o2r"])
-        else:
-            exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
-                             "--customOtrFile", customOtrFile, "--otrfile", "oot.o2r"])
-
+        exec_cmd.extend(["-gsf", "0", "-se", "OTR", "--customAssetsPath", customAssetsPath,
+                    "--customOtrFile", customOtrFile, "--otrfile", otrFileName])
 
     if portVer:
         exec_cmd.extend(["--portVer", portVer])
@@ -87,7 +85,7 @@ def main():
 
     roms = [ Z64Rom(args.rom) ] if args.rom else rom_chooser.chooseROM(args.verbose, args.non_interactive)
     for rom in roms:
-        BuildOTR(os.path.join(args.xml_root, rom.version.xml_ver), rom.file_path, rom.version.is_mm, zapd_exe=args.zapd_exe, genHeaders=args.gen_headers,
+        BuildOTR(args.xml_root, rom.version.xml_ver, os.path.join("..\OTRExporter", rom.file_path), rom.version.is_mm, zapd_exe=args.zapd_exe, genHeaders=args.gen_headers,
                  customAssetsPath=args.custom_assets_path, customOtrFile=args.custom_otr_file, portVer=args.port_ver)
 
 if __name__ == "__main__":

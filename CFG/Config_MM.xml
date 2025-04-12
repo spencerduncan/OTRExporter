@@ -1,8 +1,0 @@
-<Root>
-    <SymbolMap File="SymbolMap_MM.txt"/>
-    <ActorList File="ActorList_MM.txt"/>
-    <ObjectList File="ObjectList_MM.txt"/>
-    <EnumData File="EnumData_MM.xml"/>
-    <ExternalXMLFolder Path="../mm/assets/xml/N64_US/"/>
-    <ExternalFile XmlPath="objects/gameplay_keep.xml" OutPath="objects/gameplay_keep/"/>
-</Root>

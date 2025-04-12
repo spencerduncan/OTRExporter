@@ -37,29 +37,34 @@ class RomVersion:
         self.file_table_off = file_table_off
         self.xml_ver = xml_ver
         self.is_mm = is_mm
-        with open(file_table_path, 'r') as f:
-            self.file_table = [line.strip('\n') for line in f]
+        try:
+            with open(file_table_path, 'r') as f:
+                self.file_table = [line.strip('\n') for line in f]
+        except FileNotFoundError as e:
+            pass
+        # Catch files for the other game not being found
+        
 
 ROM_INFO_TABLE = dict()
-ROM_INFO_TABLE[Checksums.OOT_PAL_GC] = RomVersion("CFG/filelists/gamecube_pal.txt", 0x7170, "GC_NMQ_PAL_F")
-ROM_INFO_TABLE[Checksums.OOT_PAL_MQ] = RomVersion("CFG/filelists/gamecube_pal.txt", 0x7170, "GC_MQ_PAL_F")
-ROM_INFO_TABLE[Checksums.OOT_PAL_GC_DBG1] = RomVersion("CFG/filelists/dbg.txt", 0x12F70, "GC_NMQ_D")
-ROM_INFO_TABLE[Checksums.OOT_PAL_GC_MQ_DBG] = RomVersion("CFG/filelists/dbg.txt", 0x12F70, "GC_MQ_D")
-ROM_INFO_TABLE[Checksums.OOT_PAL_10] = RomVersion("CFG/filelists/pal_oot.txt", 0x7950, "N64_PAL_10")
-ROM_INFO_TABLE[Checksums.OOT_PAL_11] = RomVersion("CFG/filelists/pal_oot.txt", 0x7950, "N64_PAL_11")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_US_GC] = RomVersion("CFG/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_U")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_GC] = RomVersion("CFG/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_J")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_GC_CE] = RomVersion("CFG/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_J_CE")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_US_MQ] = RomVersion("CFG/filelists/gamecube.txt", 0x7170, "GC_MQ_NTSC_U")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_MQ] = RomVersion("CFG/filelists/gamecube.txt", 0x7170, "GC_MQ_NTSC_J")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_10] = RomVersion("CFG/filelists/ntsc_oot.txt", 0x7430, "N64_NTSC_10")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_11] = RomVersion("CFG/filelists/ntsc_oot.txt", 0x7430, "N64_NTSC_11")
-ROM_INFO_TABLE[Checksums.OOT_NTSC_12] = RomVersion("CFG/filelists/ntsc_12_oot.txt", 0x7430, "N64_NTSC_12")
+ROM_INFO_TABLE[Checksums.OOT_PAL_GC] = RomVersion("assets/extractor/filelists/gamecube_pal.txt", 0x7170, "GC_NMQ_PAL_F")
+ROM_INFO_TABLE[Checksums.OOT_PAL_MQ] = RomVersion("assets/extractor/filelists/gamecube_pal.txt", 0x7170, "GC_MQ_PAL_F")
+ROM_INFO_TABLE[Checksums.OOT_PAL_GC_DBG1] = RomVersion("assets/extractor/filelists/dbg.txt", 0x12F70, "GC_NMQ_D")
+ROM_INFO_TABLE[Checksums.OOT_PAL_GC_MQ_DBG] = RomVersion("assets/extractor/filelists/dbg.txt", 0x12F70, "GC_MQ_D")
+ROM_INFO_TABLE[Checksums.OOT_PAL_10] = RomVersion("assets/extractor/filelists/pal_oot.txt", 0x7950, "N64_PAL_10")
+ROM_INFO_TABLE[Checksums.OOT_PAL_11] = RomVersion("assets/extractor/filelists/pal_oot.txt", 0x7950, "N64_PAL_11")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_US_GC] = RomVersion("assets/extractor/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_U")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_GC] = RomVersion("assets/extractor/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_J")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_GC_CE] = RomVersion("assets/extractor/filelists/gamecube.txt", 0x7170, "GC_NMQ_NTSC_J_CE")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_US_MQ] = RomVersion("assets/extractor/filelists/gamecube.txt", 0x7170, "GC_MQ_NTSC_U")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_JP_MQ] = RomVersion("assets/extractor/filelists/gamecube.txt", 0x7170, "GC_MQ_NTSC_J")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_10] = RomVersion("assets/extractor/filelists/ntsc_oot.txt", 0x7430, "N64_NTSC_10")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_11] = RomVersion("assets/extractor/filelists/ntsc_oot.txt", 0x7430, "N64_NTSC_11")
+ROM_INFO_TABLE[Checksums.OOT_NTSC_12] = RomVersion("assets/extractor/filelists/ntsc_12_oot.txt", 0x7430, "N64_NTSC_12")
 
-ROM_INFO_TABLE[Checksums.MM_US_10] = RomVersion("CFG/filelists/mm.txt", 0x1A500, "N64_US", is_mm=True)
-ROM_INFO_TABLE[Checksums.MM_US_10_UNCOMPRESSED] = RomVersion("CFG/filelists/mm.txt", 0x1A500, "N64_US", is_mm=True)
-ROM_INFO_TABLE[Checksums.MM_US_GC] = RomVersion("CFG/filelists/mm_gc.txt", 0x1AE90, "GC_US", is_mm=True)
-ROM_INFO_TABLE[Checksums.MM_JP_GC] = RomVersion("CFG/filelists/mm_gc_jp.txt", 0x1AE90, "GC_JP", is_mm=True)
+ROM_INFO_TABLE[Checksums.MM_US_10] = RomVersion("assets/extractor/filelists/mm.txt", 0x1A500, "N64_US", is_mm=True)
+ROM_INFO_TABLE[Checksums.MM_US_10_UNCOMPRESSED] = RomVersion("assets/extractor/filelists/mm.txt", 0x1A500, "N64_US", is_mm=True)
+ROM_INFO_TABLE[Checksums.MM_US_GC] = RomVersion("assets/extractor/filelists/mm_gc.txt", 0x1AE90, "GC_US", is_mm=True)
+ROM_INFO_TABLE[Checksums.MM_JP_GC] = RomVersion("assets/extractor/filelists/mm_gc_jp.txt", 0x1AE90, "GC_JP", is_mm=True)
 
 class RomDmaEntry:
     def __init__(self, rom, i):

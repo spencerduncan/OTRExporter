@@ -752,6 +752,9 @@ void OTRExporter_DisplayList::Save(ZResource* res, const fs::path& outPath, Bina
 			break;
 		case G_SETTIMG:
 		{
+			if (res->GetName() == "gGiSeedDL") {
+				int bp = 5;
+				}
 			uint32_t seg = data & 0xFFFFFFFF;
 			int32_t texAddress = Seg2Filespace(data, dList->parent->baseAddress);
 

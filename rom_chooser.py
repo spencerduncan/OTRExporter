@@ -5,7 +5,7 @@ from rom_info import Z64Rom
 def chooseROM(verbose=False, non_interactive=False):
     roms = []
 
-    for file in glob.glob("*.z64"):
+    for file in glob.glob("../OTRExporter/*.z64"):
         rom = Z64Rom(file)
         if rom.is_valid:
             roms.append(rom)
