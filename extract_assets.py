@@ -34,6 +34,7 @@ def BuildOTR(xmlRoot, xmlVersion, rom, isMM, zapd_exe=None, genHeaders=None, cus
         exec_cmd.extend(["--portVer", portVer])
 
     print(exec_cmd)
+    print(os.getcwd())
     exitValue = subprocess.call(exec_cmd)
     if exitValue != 0:
         print("\n")
@@ -85,7 +86,7 @@ def main():
 
     roms = [ Z64Rom(args.rom) ] if args.rom else rom_chooser.chooseROM(args.verbose, args.non_interactive)
     for rom in roms:
-        BuildOTR(args.xml_root, rom.version.xml_ver, os.path.join("..\OTRExporter", rom.file_path), rom.version.is_mm, zapd_exe=args.zapd_exe, genHeaders=args.gen_headers,
+        BuildOTR(args.xml_root, rom.version.xml_ver, rom.file_path, rom.version.is_mm, zapd_exe=args.zapd_exe, genHeaders=args.gen_headers,
                  customAssetsPath=args.custom_assets_path, customOtrFile=args.custom_otr_file, portVer=args.port_ver)
 
 if __name__ == "__main__":
