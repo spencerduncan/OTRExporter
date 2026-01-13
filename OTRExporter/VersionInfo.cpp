@@ -1,9 +1,9 @@
 #include "VersionInfo.h"
 #include <libultraship/bridge.h>
 #ifdef GAME_MM
-#include "../../mm/2s2h/resource/type/2shResourceType.h"
+#include "../../games/mm/2s2h/resource/type/2shResourceType.h"
 #elif GAME_OOT
-#include "../../soh/soh/resource/type/SohResourceType.h"
+#include "../../games/oot/soh/resource/type/SohResourceType.h"
 #endif
 std::map<uint32_t, uint32_t> resourceVersions;
 
