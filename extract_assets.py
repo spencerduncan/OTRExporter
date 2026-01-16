@@ -8,26 +8,37 @@ import struct
 import subprocess
 import argparse
 
-def find_zapd_exe():
-    """Find ZAPD executable in common build locations."""
+def find_zapd_exe(for_mm=False):
+    """Find ZAPD executable in common build locations.
+
+    Args:
+        for_mm: If True, look for ZAPD_MM (MM variant), else look for ZAPD (OoT variant)
+    """
     candidates = []
+    zapd_name = "ZAPD_MM" if for_mm else "ZAPD"
+
     if sys.platform == "win32":
         # Ninja build (preferred)
         candidates.extend([
-            "../../build/ZAPD/ZAPD.exe",
-            "../../build/ZAPD/Release/ZAPD.exe",
-            "../../build/ZAPD/Debug/ZAPD.exe",
+            f"../../build/{zapd_name}.exe",
+            f"../../build/ZAPD/{zapd_name}.exe",
+            f"../../build/ZAPD/Release/{zapd_name}.exe",
             # Visual Studio build
-            "../../x64/Release/ZAPD.exe",
-            "../../x64/Debug/ZAPD.exe",
-            "x64/Release/ZAPD.exe",
-            "x64\\Release\\ZAPD.exe",
+            f"../../x64/Release/{zapd_name}.exe",
         ])
+        # Fallback to regular ZAPD if MM variant not found
+        if for_mm:
+            candidates.extend([
+                "../../build/ZAPD.exe",
+                "../../x64/Release/ZAPD.exe",
+            ])
     else:
         candidates.extend([
-            "../../build/ZAPD/ZAPD.out",
-            "../ZAPDTR/ZAPD.out",
+            f"../../build/{zapd_name}.out",
+            f"../../build/ZAPD/{zapd_name}.out",
         ])
+        if for_mm:
+            candidates.append("../../build/ZAPD.out")
 
     for candidate in candidates:
         if os.path.exists(candidate):
@@ -39,7 +50,7 @@ def find_zapd_exe():
 
 def BuildOTR(xmlRoot, xmlVersion, rom, isMM, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None):
     if not zapd_exe:
-        zapd_exe = find_zapd_exe()
+        zapd_exe = find_zapd_exe(for_mm=isMM)
     xmlPath = os.path.join(xmlRoot, xmlVersion)
     exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "assets/extractor/filelists",
                 "-o", "placeholder", "-osf", "placeholder", "-rconf"]

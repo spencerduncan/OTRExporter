@@ -88,10 +88,5 @@ if (NOT TARGET ZAPD)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../ZAPDTR/ZAPD ${CMAKE_BINARY_DIR}/ZAPD)
 endif()
 
+# OTRExporter now builds both OoT and MM variants internally
 add_subdirectory(OTRExporter)
-
-if (GAME_STR STREQUAL "MM")
-    target_compile_definitions(OTRExporter PRIVATE GAME_MM)
-else()
-    target_compile_definitions(OTRExporter PRIVATE GAME_OOT)
-endif()
