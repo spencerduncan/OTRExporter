@@ -8,9 +8,38 @@ import struct
 import subprocess
 import argparse
 
+def find_zapd_exe():
+    """Find ZAPD executable in common build locations."""
+    candidates = []
+    if sys.platform == "win32":
+        # Ninja build (preferred)
+        candidates.extend([
+            "../../build/ZAPD/ZAPD.exe",
+            "../../build/ZAPD/Release/ZAPD.exe",
+            "../../build/ZAPD/Debug/ZAPD.exe",
+            # Visual Studio build
+            "../../x64/Release/ZAPD.exe",
+            "../../x64/Debug/ZAPD.exe",
+            "x64/Release/ZAPD.exe",
+            "x64\\Release\\ZAPD.exe",
+        ])
+    else:
+        candidates.extend([
+            "../../build/ZAPD/ZAPD.out",
+            "../ZAPDTR/ZAPD.out",
+        ])
+
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            print(f"Found ZAPD at: {candidate}")
+            return candidate
+
+    # Fallback to old defaults
+    return "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
+
 def BuildOTR(xmlRoot, xmlVersion, rom, isMM, zapd_exe=None, genHeaders=None, customAssetsPath=None, customOtrFile=None, portVer=None):
     if not zapd_exe:
-        zapd_exe = "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
+        zapd_exe = find_zapd_exe()
     xmlPath = os.path.join(xmlRoot, xmlVersion)
     exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "assets/extractor/filelists",
                 "-o", "placeholder", "-osf", "placeholder", "-rconf"]
@@ -44,7 +73,7 @@ def BuildOTR(xmlRoot, xmlVersion, rom, isMM, zapd_exe=None, genHeaders=None, cus
 
 def BuildCustomOtr(zapd_exe=None, assets_path=None, otrfile=None, portVer=None):
     if not zapd_exe:
-        zapd_exe = "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
+        zapd_exe = find_zapd_exe()
 
     if not assets_path or not otrfile:
         print("\n")
