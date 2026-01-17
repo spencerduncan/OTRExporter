@@ -83,19 +83,19 @@ else()
 endif()
 
 foreach(GAME_VARIANT ${GAME_VARIANTS})
-    set(TARGET_NAME "OTRExporter_${GAME_VARIANT}")
+    set(OTREXP_TARGET "OTRExporter_${GAME_VARIANT}")
 
-    add_library(${TARGET_NAME} STATIC ${ALL_FILES})
+    add_library(${OTREXP_TARGET} STATIC ${ALL_FILES})
 
     # Set game-specific compile definition
     if(GAME_VARIANT STREQUAL "MM")
-        target_compile_definitions(${TARGET_NAME} PRIVATE GAME_MM)
+        target_compile_definitions(${OTREXP_TARGET} PRIVATE GAME_MM)
     else()
-        target_compile_definitions(${TARGET_NAME} PRIVATE GAME_OOT)
+        target_compile_definitions(${OTREXP_TARGET} PRIVATE GAME_OOT)
     endif()
 
     if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        use_props(${TARGET_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
+        use_props(${OTREXP_TARGET} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
     endif()
 endforeach()
 
@@ -119,10 +119,10 @@ find_package(spdlog REQUIRED)
 
 # Apply settings to each game variant
 foreach(GAME_VARIANT ${GAME_VARIANTS})
-    set(TARGET_NAME "OTRExporter_${GAME_VARIANT}")
+    set(OTREXP_TARGET "OTRExporter_${GAME_VARIANT}")
 
     if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set_target_properties(${TARGET_NAME} PROPERTIES
+        set_target_properties(${OTREXP_TARGET} PROPERTIES
             INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
         )
     endif()
@@ -131,7 +131,7 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
     # MSVC runtime library
     ################################################################################
     if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${TARGET_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+        get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${OTREXP_TARGET} PROPERTY MSVC_RUNTIME_LIBRARY)
         string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
             $<$<CONFIG:Debug>:
                 MultiThreadedDebug
@@ -141,14 +141,14 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
             >
             $<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
         )
-        set_target_properties(${TARGET_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+        set_target_properties(${OTREXP_TARGET} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
     endif()
 
     ################################################################################
     # Compile definitions
     ################################################################################
     if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        target_compile_definitions(${TARGET_NAME} PRIVATE
+        target_compile_definitions(${OTREXP_TARGET} PRIVATE
             "$<$<CONFIG:Debug>:"
                 "_DEBUG"
             ">"
@@ -162,7 +162,7 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
     endif()
 
     if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU|Clang|AppleClang")
-        target_compile_definitions(${TARGET_NAME} PRIVATE
+        target_compile_definitions(${OTREXP_TARGET} PRIVATE
             "$<$<CONFIG:Debug>:"
                 "_DEBUG"
             ">"
@@ -177,7 +177,7 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
     ################################################################################
     # Compile and link options
     ################################################################################
-    target_include_directories(${TARGET_NAME} PRIVATE
+    target_include_directories(${OTREXP_TARGET} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../../ZAPDTR/ZAPD/
         ${CMAKE_CURRENT_SOURCE_DIR}/../../libultraship/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../../libultraship
@@ -189,11 +189,11 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
         .
     )
 
-    target_link_libraries(${TARGET_NAME} PUBLIC nlohmann_json::nlohmann_json)
-    target_link_libraries(${TARGET_NAME} PUBLIC spdlog::spdlog)
+    target_link_libraries(${OTREXP_TARGET} PUBLIC nlohmann_json::nlohmann_json)
+    target_link_libraries(${OTREXP_TARGET} PUBLIC spdlog::spdlog)
 
     if(MSVC)
-        target_compile_options(${TARGET_NAME} PRIVATE
+        target_compile_options(${OTREXP_TARGET} PRIVATE
             $<$<CONFIG:Debug>:
                 /Od;
                 /Oi-
@@ -209,7 +209,7 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
         )
-        target_link_options(${TARGET_NAME} PRIVATE
+        target_link_options(${OTREXP_TARGET} PRIVATE
             $<$<CONFIG:Release>:
                 /OPT:REF;
                 /OPT:ICF
@@ -220,7 +220,7 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
     endif()
 
     if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU|Clang|AppleClang")
-        target_compile_options(${TARGET_NAME} PRIVATE
+        target_compile_options(${OTREXP_TARGET} PRIVATE
             -Wall -Wextra -Wno-error
             -Wno-unused-parameter
             -Wno-unused-function
@@ -235,10 +235,10 @@ foreach(GAME_VARIANT ${GAME_VARIANTS})
     ################################################################################
     # Dependencies
     ################################################################################
-    add_dependencies(${TARGET_NAME}
+    add_dependencies(${OTREXP_TARGET}
         libultraship
     )
 
-    target_link_libraries(${TARGET_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+    target_link_libraries(${OTREXP_TARGET} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
 endforeach()
 
