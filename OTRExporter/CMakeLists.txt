@@ -121,7 +121,10 @@ find_package(spdlog REQUIRED)
 foreach(GAME_VARIANT ${GAME_VARIANTS})
     set(OTREXP_TARGET "OTRExporter_${GAME_VARIANT}")
 
-    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # Enable IPO/LTO for Windows, but NOT for single-exe builds where we use
+    # /FORCE:MULTIPLE to handle duplicate symbols. /GL (IPO) is incompatible
+    # with /FORCE:MULTIPLE - causes LNK1179 (duplicate COMDAT) errors.
+    if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT SINGLE_EXECUTABLE_BUILD)
         set_target_properties(${OTREXP_TARGET} PROPERTIES
             INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
         )
