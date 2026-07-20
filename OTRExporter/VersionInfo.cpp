@@ -5,7 +5,14 @@
 #elif GAME_OOT
 #include "../../games/oot/soh/resource/type/SohResourceType.h"
 #endif
+// Per-variant namespace so the OoT and MM exporter libraries do not share one
+// resourceVersions slot under /FORCE:MULTIPLE (Fault A, #396 — see
+// ExporterVariant.h).
+namespace OTREXP_NS {
 std::map<uint32_t, uint32_t> resourceVersions;
+} // namespace OTREXP_NS
+
+using namespace OTREXP_NS;
 
 void InitVersionInfo()
 {

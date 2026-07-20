@@ -1,6 +1,9 @@
 #include "Exporter.h"
 #include "VersionInfo.h"
 
+// resourceVersions is defined in a per-variant namespace (Fault A, #396).
+using namespace OTREXP_NS;
+
 void OTRExporter::WriteHeader(ZResource* res, const fs::path& outPath, BinaryWriter* writer, uint32_t resType, int32_t resVersion)
 {
 	writer->Write((uint8_t)Endianness::Little); // 0x00

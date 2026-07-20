@@ -18,6 +18,7 @@ set(Header_Files
     "ExporterArchive.h"
     "ExporterArchiveO2R.h"
     "ExporterArchiveOTR.h"
+    "ExporterVariant.h"
     "Main.h"
     "MtxExporter.h"
     "PathExporter.h"

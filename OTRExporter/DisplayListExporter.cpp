@@ -16,6 +16,9 @@
 #include "VersionInfo.h"
 #undef FindResource
 
+// files / archive are defined in a per-variant namespace (Fault A, #396).
+using namespace OTREXP_NS;
+
 #define GFX_SIZE 8
 
 #define gsDPSetCombineLERP_NoMacros(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,      \

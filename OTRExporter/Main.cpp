@@ -31,6 +31,14 @@
 #include <ExporterArchiveO2R.h>
 
 #include "ExporterArchiveOTR.h"
+
+// All OTRExporter file-scope globals live in a per-variant namespace so the OoT
+// and MM exporter libraries do not share one storage slot under /FORCE:MULTIPLE
+// (Fault A, #396 — see ExporterVariant.h). archiveFileName keeps its own
+// per-variant value; without the namespace, double construction meant the
+// surviving value depended on static-init order — a latent wrong-archive hazard
+// on top of the crash.
+namespace OTREXP_NS {
 #ifdef GAME_MM
 std::string archiveFileName = "mm.o2r";
 #elif GAME_OOT
@@ -45,6 +53,11 @@ BinaryWriter* fileWriter;
 std::chrono::steady_clock::time_point fileStart, resStart;
 std::map<std::string, std::vector<char>> files;
 std::mutex fileMutex;
+} // namespace OTREXP_NS
+
+// The exporter's own functions below (ExporterProgramEnd, AddFile, ...) refer to
+// these globals unqualified.
+using namespace OTREXP_NS;
 
 void InitVersionInfo();
 
